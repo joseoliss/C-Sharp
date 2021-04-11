@@ -1,0 +1,203 @@
+
+private string stringConexion = @"Data Source=SERVER_NAME;Initial Catalog=DATABASE_NAME;Integrated Security=true;";
+
+        public List<usuarios_DAL> ListarUsuario()
+        {
+            List<usuarios_DAL> lstUsuariosDAL = new List<usuarios_DAL>();
+
+            SqlCommand command;
+            string query = "lst_usuario";
+
+            using (SqlConnection connection = new SqlConnection(stringConexion))
+            {
+                command = new SqlCommand(query, connection);
+                command.CommandType = CommandType.StoredProcedure;
+
+                try
+                {
+                    connection.Open();
+                    SqlDataReader reader = command.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        usuarios_DAL oUsuariosDal = new usuarios_DAL();
+                        oUsuariosDal._Id = reader.GetInt32(0);
+                        oUsuariosDal._Nombre = reader.GetString(1);
+                        oUsuariosDal._Usuario = reader.GetString(2);
+                        oUsuariosDal._Contraseña = reader.GetString(3);
+                        lstUsuariosDAL.Add(oUsuariosDal);
+                    }
+                    connection.Close();
+                    reader.Close();
+                }
+                catch (Exception ex)
+                {
+
+                    throw new Exception(ex.Message);
+                }
+                finally
+                {
+                    connection.Close();
+                }
+            }
+
+            return lstUsuariosDAL;
+        }
+        
+        
+        
+        
+        
+        
+        
+
+        public void AgregarUsuario(usuarios_DAL oUsuarioDAL)
+        {
+            SqlCommand command;
+            string query = "ins_usuario";
+
+            using (SqlConnection connection = new SqlConnection(stringConexion))
+            {
+                command = new SqlCommand(query, connection);
+                command.Parameters.AddWithValue("@nombre", oUsuarioDAL._Nombre);
+                command.Parameters.AddWithValue("@usuario", oUsuarioDAL._Usuario);
+                command.Parameters.AddWithValue("@contraseña", oUsuarioDAL._Contraseña);
+                command.CommandType = CommandType.StoredProcedure;
+
+                try
+                {
+                    connection.Open();
+                    command.ExecuteScalar();
+                    connection.Close();
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.Message);
+                }
+                finally
+                {
+                    connection.Close();
+                }
+            }
+        }
+        
+        
+        
+        
+        
+
+        public void ActualizarUsuario(usuarios_DAL oUsuarioDAL)
+        {
+            SqlCommand command;
+            string query = "mod_usuario";
+
+            using (SqlConnection connection = new SqlConnection(stringConexion))
+            {
+                command = new SqlCommand(query,connection); 
+                command.Parameters.AddWithValue("@id", oUsuarioDAL._Id);
+                command.Parameters.AddWithValue("@nombre", oUsuarioDAL._Nombre);
+                command.Parameters.AddWithValue("@usuario", oUsuarioDAL._Usuario);
+                command.Parameters.AddWithValue("@contraseña", oUsuarioDAL._Contraseña);
+                command.CommandType = CommandType.StoredProcedure;
+
+                try
+                {
+                    connection.Open();
+                    command.ExecuteNonQuery();
+                    connection.Close();
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.Message);
+                }
+                finally
+                {
+                    connection.Close();
+                }
+
+            }
+        }
+        
+        
+        
+        
+
+        public void EliminarUsuario(usuarios_DAL oUsuarioDAL)
+        {
+            SqlCommand command;
+            string query = "del_usuario";
+
+            using (SqlConnection connection = new SqlConnection(stringConexion))
+            {
+                command = new SqlCommand(query,connection);
+                command.Parameters.AddWithValue("@id", oUsuarioDAL._Id);
+                command.CommandType = CommandType.StoredProcedure;
+
+                try
+                {
+                    connection.Open();
+                    command.ExecuteNonQuery();
+                    connection.Close();
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.Message);
+                }
+                finally
+                {
+                    connection.Close();
+                }
+            }
+        }
+        
+        
+        
+        
+        public List<usuarios_DAL> Login(usuarios_DAL oUsuarioDAL)
+        {
+            SqlCommand command;
+            string query = "login_usuario";
+            List<usuarios_DAL> lstUsuariosDAL = new List<usuarios_DAL>();
+            using (SqlConnection connection = new SqlConnection(stringConexion))
+            {
+                command = new SqlCommand(query,connection);
+                command.Parameters.AddWithValue("@usuario", oUsuarioDAL._Usuario);
+                command.Parameters.AddWithValue("@contraseña", oUsuarioDAL._Contraseña);
+                command.CommandType = CommandType.StoredProcedure;
+
+                try
+                {
+                    connection.Open();
+                    SqlDataReader reader = command.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        usuarios_DAL oUsuariosDal = new usuarios_DAL();
+                        oUsuariosDal._Id = reader.GetInt32(0);
+                        oUsuariosDal._Nombre = reader.GetString(1);
+                        oUsuariosDal._Usuario = reader.GetString(2);
+                        oUsuariosDal._Contraseña = reader.GetString(3);
+                        lstUsuariosDAL.Add(oUsuariosDal);
+                    }
+                    connection.Close();
+                    reader.Close();
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.Message);
+                }
+                finally
+                {
+                    connection.Close();
+                }
+
+            }
+            return lstUsuariosDAL;
+        }
+        
+        
+        
+        
+        
+        
+        
+        
