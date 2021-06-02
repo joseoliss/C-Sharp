@@ -1,0 +1,87 @@
+        private HttpClient cliente = new HttpClient();
+        
+        private void IniciaCliente()
+        {
+            cliente.BaseAddress = new Uri("https://localhost:44322/");
+            cliente.DefaultRequestHeaders.Accept.Clear();
+            cliente.DefaultRequestHeaders.Accept.Add(
+                    new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json")
+                );
+        }
+
+
+
+
+        public async Task<List<Models.Usuario>> ListarUsuario()
+        {
+            IniciaCliente();
+            List<Models.Usuario> lstUsuario = new List<Models.Usuario>();
+            string url = "api/usuario";
+            try
+            {
+                HttpResponseMessage respuesta = await cliente.GetAsync(url);
+                if (respuesta.IsSuccessStatusCode)
+                {
+                    var data = await respuesta.Content.ReadAsStringAsync();
+                    lstUsuario = JsonConvert.DeserializeObject<List<Models.Usuario>>(data);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            return lstUsuario;
+        }
+
+
+
+
+
+        public async Task<bool> AgregarUsuario(Models.Usuario oModel)
+        {
+            IniciaCliente();
+            string url = "api/usuario";
+            try
+            {
+                HttpResponseMessage respuesta = await cliente.PostAsJsonAsync(url, oModel);
+                return respuesta.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<bool> ModificarUsuario(Models.Usuario oModel)
+        {
+            IniciaCliente();
+            string url = "api/usuario";
+            try
+            {
+                HttpResponseMessage respuesta = await cliente.PutAsJsonAsync(url, oModel);
+                return respuesta.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+
+
+
+
+        public async Task<bool> EliminarUsuario(int id)
+        {
+            IniciaCliente();
+            string url = "api/usuario/"+id;
+            try
+            {
+                HttpResponseMessage respuesta = await cliente.DeleteAsync(url);
+                return respuesta.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
