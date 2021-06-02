@@ -1,0 +1,22 @@
+public class VerificaSesión : ActionFilterAttribute
+    {
+        public override void OnActionExecuting(ActionExecutingContext filterContext)
+        {
+            var usuario = (Usuario)HttpContext.Current.Session["usuario"];
+            if (usuario == null)
+            {
+                if (filterContext.Controller is LoginController == false)
+                {
+                    filterContext.HttpContext.Response.Redirect("~/Login/Index");
+                }
+            }
+            else
+            {
+                if (filterContext.Controller is LoginController == true)
+                {
+                    filterContext.HttpContext.Response.Redirect("~/Usuario/Index");
+                }
+            }
+            base.OnActionExecuting(filterContext);
+        }
+    }
