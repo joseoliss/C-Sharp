@@ -1,0 +1,50 @@
+try
+            {
+                DateTime thisDay = DateTime.Now;
+
+                System.Text.StringBuilder sb = new System.Text.StringBuilder();
+                System.IO.StringWriter sw = new System.IO.StringWriter(sb);
+                HtmlTextWriter htw = new HtmlTextWriter(sw);
+
+                Page page = new Page();
+                System.Web.UI.HtmlControls.HtmlForm form = new System.Web.UI.HtmlControls.HtmlForm();
+
+                gv.Columns[0].Visible = false;
+                gv.Columns[1].Visible = false;
+
+                gv.AllowPaging = false;
+                //gv.DataBind();
+                gv.EnableViewState = false;
+
+                // Deshabilitar la validación de eventos, sólo asp.net 2
+                page.EnableEventValidation = false;
+
+                // Realiza las inicializaciones de la instancia de la clase Page que requieran los diseñadores RAD.
+                page.DesignerInitialize();
+
+                page.Controls.Add(form);
+                form.Controls.Add(gv);
+
+                page.RenderControl(htw);
+
+                Response.Clear();
+                Response.Buffer = true;
+                Response.ContentType = "application/vnd.ms-excel";
+                Response.AddHeader("Content-Disposition", "attachment;filename=Reporte de Restricciones " + thisDay + ".xls");
+                Response.Charset = "UTF-8";
+                Response.ContentEncoding = System.Text.Encoding.Default;
+                Response.Write(sb.ToString());
+                Response.End();
+            }
+            catch (Exception ex)
+            {
+                //Mostrar mensaje personalizado de error
+                string script = "swal('Error', 'Error al intentar descargar el documento de excel.', 'error');";
+                ScriptManager.RegisterStartupScript(this, typeof(Page), "alerta", script, true);
+                //MessageBox.Show(e + "ERROR");
+            }
+            finally
+            {
+                gv.Columns[0].Visible = true;
+                gv.Columns[1].Visible = true;
+            }
